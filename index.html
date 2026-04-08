@@ -834,7 +834,7 @@
           <em>if this meets you where you are</em>,<br>
           leave a word. I'll respond within 48 hours.
         </p>
-        <form class="contact-form" name="sanctuary-messages" method="POST" action="/success.html" data-netlify="true">
+        <form class="contact-form" name="sanctuary-messages" method="POST" data-netlify="true" id="sanctuary-form">
           <textarea name="message" placeholder="your words..." required></textarea>
           <button type="submit" class="contact-btn">send gently</button>
           <p class="contact-note">
@@ -954,6 +954,26 @@
         glyph.style.transform = `translateY(calc(-50% + ${window.scrollY * 0.3}px))`;
       }
     });
+
+    // AJAX FORM SUBMISSION
+    const contactForm = document.getElementById('sanctuary-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(contactForm);
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData).toString()
+        })
+        .then(() => {
+          contactForm.innerHTML = '<div style="text-align: center; padding: 3rem 1rem; animation: fade-in 1.5s ease forwards;"><h3 style="font-family: \'Cormorant Garamond\', serif; font-size: 2.2rem; font-weight: 300; color: var(--aurora-teal); margin-bottom: 0.5rem;">Received.</h3><p style="font-size: 1rem; color: var(--text-soft); font-style: italic; margin: 0;">Your words have arrived safely.</p></div>';
+        })
+        .catch((error) => {
+          alert('Ah, something went wrong crossing the digital ether. Please try again.');
+        });
+      });
+    }
   </script>
 </body>
 </html>
