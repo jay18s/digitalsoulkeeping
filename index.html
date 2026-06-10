@@ -4,6 +4,38 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Digital Soulkeeping — A Sanctuary for Intentional Technology</title>
+  <script>
+    (() => {
+      const sourceUrl = 'https://raw.githubusercontent.com/jay18s/digitalsoulkeeping/main/index.html';
+      const syncTimeoutMs = 3500;
+
+      if (window.__DSK_REMOTE_SYNC_DONE__) {
+        return;
+      }
+      window.__DSK_REMOTE_SYNC_DONE__ = true;
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), syncTimeoutMs);
+
+      fetch(sourceUrl, { cache: 'no-store', signal: controller.signal })
+        .then((response) => (response.ok ? response.text() : Promise.reject(new Error(`HTTP ${response.status}`))))
+        .then((remoteHtml) => {
+          clearTimeout(timeout);
+          if (!remoteHtml || !remoteHtml.includes('<html')) {
+            return;
+          }
+          if (remoteHtml.trim() === document.documentElement.outerHTML.trim()) {
+            return;
+          }
+          document.open();
+          document.write(remoteHtml);
+          document.close();
+        })
+        .catch(() => {
+          clearTimeout(timeout);
+        });
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
